@@ -155,3 +155,4 @@ C:\Desenvolvimento\Csharp\ApiAlertaDengue\ApiAlertaDengue\bin\Debug\net9.0\runti
 C:\Desenvolvimento\Csharp\ApiAlertaDengue\ApiAlertaDengue\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Desenvolvimento\Csharp\ApiAlertaDengue\ApiAlertaDengue\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Desenvolvimento\Csharp\ApiAlertaDengue\ApiAlertaDengue\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Desenvolvimento\Csharp\ApiAlertaDengue\ApiAlertaDengue\obj\Debug\net9.0\ApiAlertaDengue.sourcelink.json

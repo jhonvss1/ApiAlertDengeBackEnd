@@ -5,26 +5,27 @@ using ApiAlertaDengue.Models;
 
 namespace ApiAlertaDengue.Services;
 
-public class DengueService : IDengueService
+public class DengueService(IDengueRepository repository, HttpClient httpClient) : IDengueService
 {
-    private readonly IDengueRepository _repository;
-    private readonly HttpClient _httpClient;
-    private const string API_URL = "https://info.dengue.mat.br/api/alertcity";
+    private const string ApiUrl = "https://info.dengue.mat.br/api/alertcity";
 
-    public DengueService(IDengueRepository repository, HttpClient httpClient)
-    {
-        _repository = repository;
-        _httpClient = httpClient;
-    }
-    
     public async Task<IEnumerable<DengueAlert?>> GetAlertsAsync()
     {
-        return await _repository.GetAllAsync();
+        return await repository.GetAllAsync();
     }
 
     public async Task<DengueAlert?> GetAlertByWeekAsync(int week, int year)
     {
-        return await _repository.GetByWeekAsync(week, year);
+        try
+        {
+            return await repository.GetByWeekAsync(week, year);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("é necessário adicionar uma semana que" +
+                              " esteja dentro do intervaolo dos últimos seis meses da data atual",e.Message);
+            throw;
+        }
     }
 
     public async Task<bool> FetchAndStoreAlertsAsync()
@@ -44,23 +45,16 @@ public class DengueService : IDengueService
                 { "ey_start", startYear.ToString() },
                 { "ey_end", endYear.ToString() }
             };
-
-            // Construindo a query string corretamente
+            
             var queryString = string.Join("&", queryParams
                 .Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
             
-            var url = $"{API_URL}?{queryString}";
-
-
-            Console.WriteLine($"Generated URL: {url}");//para debug
+            var url = $"{ApiUrl}?{queryString}";
             
-            var response = await _httpClient.GetFromJsonAsync<List<ExternalApiResponse>>(url);
-            
+            var response = await httpClient.GetFromJsonAsync<List<ExternalApiResponse>>(url);
             
             if (response == null || response.Count == 0) return false;
-
             
-            //transformando a resposta da api em um padrao de dados interno do sistema
             var alerts = response.Select(r => new DengueAlert
             {
                 EpidemologicalWeek = r.SemanaEpidemologica,
@@ -70,8 +64,8 @@ public class DengueService : IDengueService
                 AlertLevel = (AlertLevel)r.Nivel,
             });
 
-            await _repository.AddRangeAsync(alerts);
-            return await _repository.SaveAllAsync();
+            await repository.AddRangeAsync(alerts);
+            return await repository.SaveAllAsync();
         }
         catch (Exception e)
         {

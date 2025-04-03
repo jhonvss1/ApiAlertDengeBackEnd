@@ -8,7 +8,7 @@ namespace ApiAlertaDengue.Models
         public int SemanaEpidemologica { get; set; }
 
         [JsonPropertyName("casos_est")]
-        public double CasosEstimados { get; set; }  // Alterado para double
+        public double CasosEstimados { get; set; }  
 
         [JsonPropertyName("casos")]
         public int CasosNotificados { get; set; }
